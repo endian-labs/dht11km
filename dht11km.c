@@ -280,6 +280,8 @@ static int read_dht11(struct inode *inode, struct file *file)
 {
 	char result[3];			//To say if the result is trustworthy or not
 	int retry = 0;
+	int hum22 = 0;  /* DHT22 humidity in 0.1 % RH */
+	int temp22 = 0; /* DHT22 temperature in 0.1 degrees C */
 	
 	if (Device_Open)
 		return -EBUSY;
@@ -347,7 +349,12 @@ return_result:
 		case 3: /* DHT 11 readout */
 			sprintf(msg, "Temperature: %dC\nHumidity: %d\nResult:%s\n", dht[2], dht[0], result);
 			break;
-		
+		case 4: /* DHT22 readout */
+			temp22 = (dht[2] & 0x7F) * 256 + dht[3];
+			if (dht[2] & 0x80) temp22 = -(temp22);
+			hum22 = dht[0] * 256 + dht[1];
+			sprintf(msg, "Temperature: %d.%dC\nHumidity: %d.%d\nResult:%s\n", temp22/10, temp22%10, hum22/10, hum22%10, result);
+			break;		
 	}
 	msg_Ptr = msg;
 
