@@ -342,8 +342,8 @@ return_result:
 		case 2:
 			sprintf(msg, "%02X%02X%02X%02X%02X%s\n", dht[0], dht[1], dht[2], dht[3], dht[4], result);
 			break;
-		case 3:
-			sprintf(msg, "Temperature: %dC\nHumidity: %d%%\nResult:%s\n", dht[0], dht[2], result);
+		case 3: /* DHT 11 readout */
+			sprintf(msg, "Temperature: %dC\nHumidity: %d\nResult:%s\n", dht[2], dht[0], result);
 			break;
 		
 	}
