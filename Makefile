@@ -1,7 +1,14 @@
-obj-m += dht11km.o
+ifneq ($(KERNELRELEASE),)
+# kbuild part of makefile
+obj-m  := dht11km.o
 
-all:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+else
+# normal makefile
+KDIR ?= /lib/modules/`uname -r`/build
+
+default:
+	$(MAKE) -C $(KDIR) M=$$PWD
 
 clean:
-	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+	$(MAKE) -C $(KDIR) M=$$PWD clean
+endif
