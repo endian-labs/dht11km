@@ -149,7 +149,7 @@ static irqreturn_t irq_handler(int i, void *blah, struct pt_regs *regs)
 			
 		if((signal == 0)&(started==1))
 			{
-			if(data > 80)
+			if(data > 77)
 				return IRQ_HANDLED;										//Start/spurious? signal
 			if(data < 15)
 				return IRQ_HANDLED;										//Spurious signal?
@@ -314,11 +314,13 @@ start_read:
 	setup_interrupts();
 	
 	//Give the dht11 time to reply
-	mdelay(10);
+	mdelay(100);
 	
 	//Check if the read results are valid. If not then try again!
-	if((dht[0] + dht[1] + dht[2] + dht[3] == dht[4]) & (dht[4] > 0))
+	if(((unsigned char)(dht[0] + dht[1] + dht[2] + dht[3]) == dht[4]) && (bytecount == 5))
+	{
 		sprintf(result, "OK");
+	}	
 	else
 		{
 		retry++;
@@ -326,7 +328,7 @@ start_read:
 		if(retry == 5)
 			goto return_result;		//We tried 5 times so bail out
 		clear_interrupts();
-		mdelay(1100);				//Can only read from sensor every 1 second so give it time to recover
+		mdelay(2100);				//Can only read from sensor every 1 second so give it time to recover
 		goto start_read;
 		}
 
